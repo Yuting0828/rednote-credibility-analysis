@@ -1,90 +1,56 @@
-# Xiaohongshu(RedNote)-credibility-analysis
+# Content Credibility Signals on Xiaohongshu (RedNote): An Exploratory Study
 
-## Research on an Automatic Credibility Evaluation Model for AI-Generated Multimodal Content: The Case of Xiaohongshu
+**Author:** Yuting Wang
 
-Author: Yuting Wang  
-Course: FIT5145 Data Science Foundations  
+**Context:** Individual course project, Foundations of Data Science (FIT5145), Monash University, 2025
 
-The original assignment for this project only implemented basic text and image analysis, but I plan to further expand it into an in-depth study combining LLM and multimodal methods. The following is the complete design description.
+**Status:** Exploratory rule-based prototype in R. It is part of a broader course proposal on credibility assessment of AI-generated multimodal content; the components that would identify AI-generated content are **not** implemented.
 
----
+## Research question
 
-### Project Objectives
+Which observable cues can flag potentially low-credibility posts on social platforms?
 
-Utilize natural language processing and image understanding technologies to automatically identify untrustworthy AI-generated image-text content on social media platforms, thereby enhancing user trust and content quality.
+## Files
 
----
+| File | Description |
+|---|---|
+| `rednote_credibility_analysis.Rmd` | R Markdown code for the analysis |
+| `README.md` | This file |
 
-### Project Module Design and Expansion Strategy
+## What the code does
 
-#### 1. Image-Text Consistency Detection
+1. **Data quality report:** missing values, image coverage, tag validity and numeric summaries.
+2. **Engagement anomalies:** posts with zero likes but 100 or more collects, and posts with zero comments but 100 or more likes.
+3. **Tag analysis:** the 20 most frequent tags (translated to English for display) and a word cloud. The most frequent tags concern weight loss, outfits, skincare, aesthetic medicine and product recommendations.
+4. **Credibility heuristics (rule-based):**
+   - *Text-image mismatch indicators:* long text (over 300 characters) with no image; short text (under 50 characters) with more than three images; food or outfit titles with no image.
+   - *Heuristic credibility score:* promotional wording ("free", "claim", "benefits") scores 0.3; absolute claims ("most", "absolute", "100%") score 0.5; very little text per image scores 0.4; everything else scores 0.8.
+   - *Suspicious features:* six-digit numbers or "verification code", more than three exclamation marks, and very long text with no image.
 
-Objective: Identify whether the image and text semantics match, detecting false content where the image does not align with the text.
+## Data and ethics
 
-- Use CLIP to extract image and text embeddings;
-- Calculate semantic similarity to determine consistency;
-- Analyze image content summaries and compare them with the original user text to enhance model interpretability.
+- Input file: `xiaohongshu_data.csv` (**not included**). It holds 1,163 public posts collected via platform search, used for coursework only.
+- Fields used: title, content, tags, image URLs and interaction counts. Author names and identifiers were not used in the analysis.
+- The sample comes from search results, so it is not a random sample of the platform.
 
-Tools: CLIP / BLIP2, sentence-transformers
+## How to run
 
----
+Install R with the packages `readxl`, `tidyverse`, `wordcloud2`, `ggplot2`, `htmlwidgets` and `skimr`, place a CSV with the same column names (`title`, `content`, `tags`, `image_urls`, `like_count`, `collect_count`, `comments_count`) next to the Rmd, and knit.
 
-#### 2. Credibility Signal Extraction from Text
+## Results (descriptive)
 
-Objective: Identify potential promotional, false, or manipulative language in text.
+- The rules flagged about 18% of posts for a text-image mismatch indicator and about 6.2% for abnormal engagement.
+- These are **rule hit rates**, not estimates of how much content on the platform is misleading or AI-generated.
 
-- Extract features such as length, sentiment, and emoji/hashtag density;
-- Detect promotional/manipulative language;
-- Build polynomial logistic regression or random forest models to predict credibility scores;
-- Perform “credibility rewriting” on portions of text to analyze linguistic structure differences.
+## Limitations
 
-Tools: HuggingFace Transformers, sklearn, pandas
+- There are no ground-truth labels, so the heuristic score is not validated.
+- The rules are crude. Image analysis is count-based only (image content is not analysed), and broad keywords (for example "most") are likely to flag many ordinary posts. Score thresholds are arbitrary.
+- The prototype does not identify AI-generated content.
+- It looks only at the content side, not at how users perceive or act on credibility cues.
 
----
+## Next steps
 
-#### 3. User Behavior Analysis (User Behavior & Metadata Patterns)
-
-Objective: Identify bot accounts or accounts engaged in bulk posting through metadata patterns.
-
-- Calculate posting frequency, time intervals, and content repetition rates;
-- Construct time series analysis charts to identify “batch generation” signals;
-- Perform cluster analysis (e.g., DBSCAN) to identify “matrix accounts”;
-
-Tools: seaborn, sklearn, pandas
-
----
-
-#### 4. LDA Topic Modeling and Content Quality Mapping (Topic Modeling)
-
-Objective: Explore the intrinsic connection between “topics” and “credibility.”
-
-- Use LDA/BERTopic to obtain post topics;
-- Analyze the average credibility score and emotional extremity under each topic;
-- Summarize topic semantic features, user psychology, and false proportion.
-
-Tools: Gensim, BERTopic, seaborn
-
----
-
-### Future Directions for the Project
-
-- Migrate to a Python framework;
-- Apply multimodal LLM;
-- Conduct modeling on real social platform data;
-
----
-
-### Current Version Limitations
-
-- The R language implementation is a simplified version;
-- Advanced NLP/NLU models are not implemented;
-- Please refer to `Yuting_34264353_Assignment3_report.pdf` for the original output.
-
----
-
-### Attachments
-
-- `Yuting_34264353_Assignment3_report.pdf`: Original analysis report  
-- `Yuting_34264353_Assignment3`: Original assignment code  
-- `README.md`: This documentation file
-
+1. **User-side study (main interest):** examine how users perceive and act on credibility cues, for example in an online experiment that varies one cue at a time and measures perceived credibility and behavioral intentions (clicking, sharing).
+2. **Validation:** collect human credibility judgments for a sample of posts to test the heuristic score.
+3. **AI-generated content:** study cues relevant to AI-generated content, such as provenance labels, rather than relying on keyword rules.

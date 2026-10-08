@@ -1,4 +1,4 @@
-# Xiaohongshu(RedNoe)-credibility-analysis
+# Xiaohongshu(RedNote)-credibility-analysis
 
 ## Research on an Automatic Credibility Evaluation Model for AI-Generated Multimodal Content: The Case of Xiaohongshu
 

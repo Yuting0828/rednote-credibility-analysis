@@ -1,4 +1,4 @@
-# xhs-credibility-analysis
+# Xiaohongshu(RedNoe)-credibility-analysis
 
 ## Research on an Automatic Credibility Evaluation Model for AI-Generated Multimodal Content: The Case of Xiaohongshu
 
